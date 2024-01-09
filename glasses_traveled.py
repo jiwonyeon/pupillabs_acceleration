@@ -134,13 +134,16 @@ for id in range(len(params)):
     speed = params.iloc[id]['speed']
     ramp = params.iloc[id]['ramp']
     traveled_distance = params.iloc[id]['traveled distance']
-    data = all_data[(all_data['speed'] == speed) & (all_data['ramp'] == ramp)]
+    data = all_data[(all_data['traveled time'] == traveled_time) & 
+                    (all_data['speed'] == speed) & 
+                    (all_data['ramp'] == ramp) & 
+                    (all_data['traveled distance'] == traveled_distance)]
 
     # create a new figure for each parameter
     fig, ax = plt.subplots(3,3, figsize=(8, 8))    
-    ax[0,0].set_title('X-axis')    # first panel shows raw and filtered accelerometer 
-    ax[0,1].set_title('Y-axis')             # second panel shows velocity
-    ax[0,2].set_title('Z-axis')          # third panel shows displacement    
+    ax[0,0].set_title('X-axis (up/down)')     # first panel shows raw and filtered accelerometer 
+    ax[0,1].set_title('Y-axis (roll)')     # second panel shows velocity
+    ax[0,2].set_title('Z-axis (left/right)')     # third panel shows displacement    
     for row in range(len(data)):
         time = data['time'].iloc[row]
         for direction in range(3):
@@ -149,11 +152,11 @@ for id in range(len(params)):
             ax[0, direction].plot(time, y, color = colors[direction], alpha = 0.3, linestyle = '-')
 
             y = data['filtered acceleration [m/s^2]'].iloc[row][direction,:]
-            ax[0, direction].plot(time, y, color = colors[direction])
+            ax[0, direction].plot(time, y, color = 'k', linewidth = 0.5)
 
             if row == len(data)-1:
                 legend_elements = [plt.Line2D([0], [0], color=colors[direction], alpha = 0.3, linestyle ='-'),                            
-                    plt.Line2D([0], [0], color=colors[direction])]
+                    plt.Line2D([0], [0], color='k', linewidth = 0.5)]
                 legend_labels = ['Raw', 'Filtered']
                 ax[0, direction].legend(legend_elements, legend_labels, fontsize='x-small')
     
@@ -166,7 +169,7 @@ for id in range(len(params)):
             ax[2, direction].plot(time, y, color = colors[direction])
 
             if row == len(data)-1:
-                ax[0,direction].set_xlabel('time [s]')
+                ax[2,direction].set_xlabel('time [s]')
 
     ax[0,0].set_ylabel('Acceleration [m/s$^2$]')
     ax[1,0].set_ylabel('Velocity [m/s]')
@@ -185,8 +188,3 @@ for id in range(len(params)):
     fig.savefig(os.path.join('./figures', filename), dpi=150)
         
 
-
-        
-
-
-    
